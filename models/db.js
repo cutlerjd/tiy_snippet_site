@@ -10,24 +10,24 @@ const snippetSchema = new mongoose.Schema({
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, unique: true, lowercase: true, required: true },
-  passwordHash: { type: String, required: true }
+    username: { type: String, unique: true, lowercase: true, required: true },
+    passwordHash: { type: String, required: true }
 });
 
 userSchema.virtual('password')
-  .get(function () { return null })
-  .set(function (value) {
-    const hash = bcrypt.hashSync(value, 8);
-    this.passwordHash = hash;
-  })
+    .get(function () { return null })
+    .set(function (value) {
+        const hash = bcrypt.hashSync(value, 8);
+        this.passwordHash = hash;
+    })
 
 userSchema.methods.authenticate = function (password) {
-  return bcrypt.compareSync(password, this.passwordHash);
+    return bcrypt.compareSync(password, this.passwordHash);
 }
-userSchema.statics.authenticate = function(username, password, done) {
+userSchema.statics.authenticate = function (username, password, done) {
     this.findOne({
         username: username
-    }, function(err, user) {
+    }, function (err, user) {
         if (err) {
             done(err, false)
         } else if (user && user.authenticate(password)) {
@@ -38,17 +38,28 @@ userSchema.statics.authenticate = function(username, password, done) {
     })
 };
 
+function registerUser(username, password) {
+    let user = new User({ username: "jase", password: "badpassword" })
+    user.save()
+        .then(function (result) {
+            console.log(result)
+        })
+        .catch(function (error) {
+            console.log("There was an error", error)
+        })
+}
+
 const Snippet = mongoose.model('snippets', snippetSchema);
 const User = mongoose.model('User', userSchema);
 
-//let jase = new User({username: "jase", password: "badpassword"})
+// let jase = new User({ username: "jase", password: "badpassword" })
 
 // jase.save()
-//     .then(function (result){
+//     .then(function (result) {
 //         console.log(result)
 //     })
-//     .catch(function (error){
-//         console.log("There was an error",error)
+//     .catch(function (error) {
+//         console.log("There was an error", error)
 //     })
 
 //User.authenticate("jase","badpasswrd",console.log)
