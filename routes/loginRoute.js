@@ -7,8 +7,19 @@ router.get('/',function(req,res,next){
 })
 
 router.post('/user_login',function(req,res,next){
-    userModel.User.authenticate(req.body.username,req.body.password,console.log)
-    res.redirect('/login')
+    console.log("Posted to user_login")
+    userModel.User.authenticate(req.body.username,req.body.password,function(err,result){
+        if(result){
+            req.session.user = req.body.username
+            console.log("Hello",req.session.user)
+            res.redirect('/')
+        }else{
+            console.log("error",err)
+            console.log(req.body.username)
+            res.redirect('/login')
+        }
+    })
+    
 })
 router.get("/register",function(req,res,next){
     res.render('register')

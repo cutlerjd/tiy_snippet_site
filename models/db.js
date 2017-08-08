@@ -39,7 +39,7 @@ userSchema.statics.authenticate = function (username, password, done) {
 };
 
 function registerUser(username, password) {
-    let user = new User({ username: "jase", password: "badpassword" })
+    let user = new User({ username: username, password: password })
     user.save()
         .then(function (result) {
             console.log(result)
